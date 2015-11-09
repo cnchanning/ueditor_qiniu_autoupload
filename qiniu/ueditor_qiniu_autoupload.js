@@ -14,7 +14,7 @@
     var sendAndInsertImage = function (file, editor) {
         //模拟数据
         var fd = new FormData();
-        fd.append('file', file, file.name || (new Date().valueOf().toString().substr(-5) + file.type.substr('image/'.length)));
+        fd.append('file', file, file.name || ('filename.' + file.type.substr('image/'.length)));
         fd.append('type', 'ajax');
 
         var ajax = new XMLHttpRequest();
@@ -25,7 +25,7 @@
                 var res = JSON.parse(ajax.responseText);
                 var token = res.uptoken;
                 fd.append('token', token);
-                fd.append('key', editor.options.qiniuPrefixPath+ (file.name || new Date().valueOf()+'_'+new Date().valueOf().toString().substr(-5) + file.type.substr('image/'.length)));
+                fd.append('key', editor.options.qiniuPrefixPath+ new Date().valueOf()+'_'+ (file.name || Math.floor(Math.random()*10000) + '.' + file.type.substr('image/'.length)));
                 var xhr = new XMLHttpRequest();
                 xhr.open("post", editor.options.qiniuUploadUrl, true);
                 xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
@@ -34,7 +34,6 @@
                         var json = eval('('+e.target.response+')'),
                             link = json.key,
                             picLink = editor.options.qiniuCDN + link;
-                        console.log(json);
                         editor.execCommand('insertimage', {
                             src: picLink,
                             _src: picLink
